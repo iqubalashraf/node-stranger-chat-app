@@ -1,4 +1,4 @@
-var generateMessage = (name,socket_id, friend_socket_id,text,gender,country,notification) =>{
+var generateMessage = (name,socket_id, friend_socket_id,text,gender,country,notification,viewType) =>{
 	return{
 		name,
 		socket_id,
@@ -7,6 +7,7 @@ var generateMessage = (name,socket_id, friend_socket_id,text,gender,country,noti
 		country,
 		gender,
 		notification,
+		viewType,
 		createdAt: new Date().getTime()
 	};
 };
