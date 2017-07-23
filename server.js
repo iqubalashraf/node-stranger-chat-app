@@ -1,8 +1,12 @@
 const http = require('http');
 const express = require('express');
 const socketIO = require('socket.io');
+const formidable = require('formidable');
+const os=require('os');  
+const file_path = os.homedir();
+const fs = require('fs');
 
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateUploadResponseMessage} = require('./utils/message');
 const {Users} = require('./utils/users');
 const {NotConnectedUsers} = require('./utils/notConnectedUsers');
 
@@ -17,11 +21,47 @@ var notConnectedUsers = new NotConnectedUsers();
 const VIEW_TYPE_MY_MESSAGE = 1;
 const VIEW_TYPE_FRIEND_MESSAGE = 2;
 const VIEW_TYPE_OTHER_MESSAGE = 3;
+const VIEW_TYPE_MY_IMAGE_MESSAGE = 4;
+const VIEW_TYPE_FRIEND_IMAGE_MESSAGE = 5;
 
 const MALE = 0;
 const FEMALE = 1;
 
-app.use(express.static(__dirname));
+// app.use(express.static(__dirname));
+
+// app.get('/', (req, res) => {
+// 	 res.writeHead(200, {'Content-Type': 'text/html'});
+//     res.write('<form action="uploads" method="post" enctype="multipart/form-data">');
+//     res.write('<input type="file" name="filetoupload"><br>');
+//     res.write('<input type="submit">');
+//     res.write('</form>');
+//     return res.end();
+// });
+
+// app.post('/uploads',(req, res) =>{
+// 	var form = new formidable.IncomingForm();
+//     form.parse(req, function (err, fields, files) {
+//     	if (err){
+//     		console.log('Error occured in uploading file');
+//     		res.write(generateUploadResponseMessage("Error", 1));
+//         	res.end();
+//     	}else{
+//     		var oldpath = files.filetoupload.path;
+//       		var newpath = __dirname + '/' + files.filetoupload.name;
+//       		fs.rename(oldpath, newpath, function (err) {
+//         	if (err) throw err;
+//         	res.write(generateUploadResponseMessage(files.filetoupload.name, 0));
+//         	res.end();
+//       		});
+//     	}
+      
+// 	}); 
+// });
+
+// app.get('/download', function(req, res){
+//   var file = __dirname + '/'+ req.query.filename;
+//   res.download(file); // Set disposition and send it.
+// });
 
 io.on('connection', (socket) =>{
 
@@ -82,6 +122,23 @@ io.on('connection', (socket) =>{
 
 		callback();
 	});
+
+	socket.on('createImageMessage', (message, callback) =>{
+		var user = users.getUser(socket.id);
+		if(user){
+			io.to(user.friend_socket_id).emit('newImageMessage', generateMessage(message.name, user.id,
+			 user.friend_socket_id, message.text, user.gender, user.country, false,
+			  VIEW_TYPE_FRIEND_IMAGE_MESSAGE));
+
+			io.to(user.id).emit('newImageMessage', generateMessage(message.name, user.id,
+			 user.friend_socket_id, message.text, user.gender, user.country, false,
+			  VIEW_TYPE_MY_IMAGE_MESSAGE));
+
+		}
+
+		callback();
+	});
+
 	socket.on('partnerLeft', (message, callback) =>{
 		var unConnectedUser = notConnectedUsers.removeUser(socket.id);
 		var user = users.removeUser(socket.id);

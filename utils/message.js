@@ -12,4 +12,8 @@ var generateMessage = (name,socket_id, friend_socket_id,text,gender,country,noti
 	};
 };
 
-module.exports = {generateMessage};
+var generateUploadResponseMessage = (filename, status) =>{
+	return `{"filename":"${filename}", "status":${status}}`
+};
+
+module.exports = {generateMessage,generateUploadResponseMessage};
