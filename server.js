@@ -27,6 +27,8 @@ const VIEW_TYPE_FRIEND_IMAGE_MESSAGE = 5;
 const MALE = 0;
 const FEMALE = 1;
 
+const APP_VERSION_CODE = 5;
+
 // app.use(express.static(__dirname));
 
 // app.get('/', (req, res) => {
@@ -64,7 +66,9 @@ const FEMALE = 1;
 // });
 
 io.on('connection', (socket) =>{
-
+	io.to(socket.id).emit('appVersion', {
+		'versionCode': APP_VERSION_CODE
+	});
 	socket.on('join', (params, callback) =>{
 		callback(0);
 		var user = notConnectedUsers.getUser();
@@ -187,6 +191,12 @@ io.on('connection', (socket) =>{
 			 user.id, `${user.name} left.`, partner.gender, partner.country, false,
 			  VIEW_TYPE_OTHER_MESSAGE));
 		}
+	});
+	socket.on('getUserListConnected', () =>{
+		io.to(socket.id).emit('userListConnected', users);
+	});
+	socket.on('getUserListNotConnected', () =>{
+		io.to(socket.id).emit('userListNotConnected', notConnectedUsers);
 	});
 });
 
