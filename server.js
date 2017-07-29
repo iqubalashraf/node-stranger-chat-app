@@ -86,7 +86,7 @@ io.on('connection', (socket) =>{
 				gender = 'Female';
 			}
 			io.to(user.id).emit('onConnected', generateMessage(user.name, user.id, socket.id,
-			 `Connected with ${params.name}, ${gender}`, user.gender, user.country, true,
+			 `Connected ${gender} Partner`, user.gender, user.country, true,
 			  VIEW_TYPE_OTHER_MESSAGE));
 			console.log(`users added: ${users.getUser(user.id).name}`);
 			users.removeUser(socket.id);
