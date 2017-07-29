@@ -97,7 +97,7 @@ io.on('connection', (socket) =>{
 				gender = 'Female';
 			}
 			io.to(socket.id).emit('onConnected', generateMessage(params.name, socket.id, user.id, 
-				`Connected with ${user.name}, ${gender}`, params.gender, params.country, true,
+				`Connected ${gender} Partner`, params.gender, params.country, true,
 				 VIEW_TYPE_OTHER_MESSAGE));
 			console.log(`users added: ${users.getUser(socket.id).name}`);
 		}else{
