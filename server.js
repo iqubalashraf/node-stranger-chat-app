@@ -163,7 +163,7 @@ io.on('connection', (socket) =>{
 		if(partner){
 			console.log(`${partner.name} left`);
 			io.to(partner.id).emit('partnerLeft', generateMessage(partner.name, partner.id,
-			 user.id, `${user.name} left.`, partner.gender, partner.country, false,
+			 user.id, `Partner left.`, partner.gender, partner.country, false,
 			  VIEW_TYPE_OTHER_MESSAGE));
 		}
 		callback();
@@ -188,7 +188,7 @@ io.on('connection', (socket) =>{
 		if(partner){
 			console.log(`${partner.name} left`);
 			io.to(partner.id).emit('partnerLeft', generateMessage(partner.name, partner.id,
-			 user.id, `${user.name} left.`, partner.gender, partner.country, false,
+			 user.id, `Partner left.`, partner.gender, partner.country, false,
 			  VIEW_TYPE_OTHER_MESSAGE));
 		}
 	});
