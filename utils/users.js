@@ -2,8 +2,8 @@ class Users {
   constructor () {
     this.users = [];
   }
-  addUser (id, name, friend_socket_id, gender, country) {
-    var user = {id, name, friend_socket_id, gender, country};
+  addUser (id, name, friend_socket_id, gender, country, age, unique_id, VERSION_NAME, VERSION_CODE) {
+    var user = {id, name, friend_socket_id, gender, country, age, unique_id, VERSION_NAME, VERSION_CODE};
     this.users.push(user);
     return user;
   }
