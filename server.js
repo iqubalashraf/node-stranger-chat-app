@@ -5,6 +5,7 @@ const formidable = require('formidable');
 const os=require('os');  
 const file_path = os.homedir();
 const fs = require('fs');
+const rn = require('random-number');
 
 const {generateMessage, generateUploadResponseMessage} = require('./utils/message');
 const {Users} = require('./utils/users');
@@ -17,17 +18,29 @@ var server = http.createServer(app);
 var io = socketIO(server);
 var users = new Users();
 var notConnectedUsers = new NotConnectedUsers();
-
+ // Type of messeage on the basis of it, view type in android set
 const VIEW_TYPE_MY_MESSAGE = 1;
 const VIEW_TYPE_FRIEND_MESSAGE = 2;
 const VIEW_TYPE_OTHER_MESSAGE = 3;
 const VIEW_TYPE_MY_IMAGE_MESSAGE = 4;
 const VIEW_TYPE_FRIEND_IMAGE_MESSAGE = 5;
 
+// gender of user
 const MALE = 0;
 const FEMALE = 1;
 
+// Current app version, this is the minimun version should be installed in each device.
 const APP_VERSION_CODE = 5;
+
+//Limit of random number
+const MINIMUM_VALUE_OF_RANDOM_NUMBER = 10000;
+const MAXIMUM_VALUE_OF_RANDOM_NUMBER = 30000;
+var genrateRandomMessage = rn.generator({
+  min:  MINIMUM_VALUE_OF_RANDOM_NUMBER
+, max:  MAXIMUM_VALUE_OF_RANDOM_NUMBER
+, integer: true
+});
+
 
 // app.use(express.static(__dirname));
 
@@ -71,11 +84,12 @@ io.on('connection', (socket) =>{
 	});
 	socket.on('join', (params, callback) =>{
 		callback(0);
-		var user = notConnectedUsers.getUser();
 		io.to(socket.id).emit('onWaiting', generateMessage(params.name, socket.id, null,
 		 'Waiting for another user...', params.gender, params.country, false,
 		  VIEW_TYPE_OTHER_MESSAGE));
-		if(user){ 
+		setTimeout(function(){
+			var user = notConnectedUsers.getUser();
+			if(user){ 
 			users.removeUser(user.id);
 			notConnectedUsers.removeUser(user.id);
 			users.addUser(user.id, user.name, socket.id, user.gender, user.country,
@@ -112,6 +126,8 @@ io.on('connection', (socket) =>{
 			console.log(`notConnectedUsers added: ${notConnectedUsers.getUser(socket.id).name}, ${params.age}
 				${params.unique_id}`);
 		}
+		
+	}, genrateRandomMessage());
 		
 	});
 
