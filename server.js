@@ -88,7 +88,8 @@ io.on('connection', (socket) =>{
 		 'Waiting for another user...', params.gender, params.country, false,
 		  VIEW_TYPE_OTHER_MESSAGE));
 		setTimeout(function(){
-			var user = notConnectedUsers.getUser();
+			if(socket.connected){
+				var user = notConnectedUsers.getUser();
 			if(user){ 
 			users.removeUser(user.id);
 			notConnectedUsers.removeUser(user.id);
@@ -126,6 +127,10 @@ io.on('connection', (socket) =>{
 			console.log(`notConnectedUsers added: ${notConnectedUsers.getUser(socket.id).name}, ${params.age}
 				${params.unique_id}`);
 		}
+			}else{
+				console.log('User left');
+			}
+			
 		
 	}, genrateRandomMessage());
 		
@@ -164,6 +169,7 @@ io.on('connection', (socket) =>{
 	});
 
 	socket.on('partnerLeft', (message, callback) =>{
+		console.log(`disconnect called ${socket.id}`);
 		var unConnectedUser = notConnectedUsers.removeUser(socket.id);
 		var user = users.removeUser(socket.id);
 		var partner;
@@ -189,6 +195,7 @@ io.on('connection', (socket) =>{
 		callback();
 	});
 	socket.on('disconnect', () =>{
+		console.log(`disconnect called ${socket.id}`);
 		var unConnectedUser = notConnectedUsers.removeUser(socket.id);
 		var user = users.removeUser(socket.id);
 		var partner;
