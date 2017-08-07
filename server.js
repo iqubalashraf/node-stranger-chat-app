@@ -90,43 +90,52 @@ io.on('connection', (socket) =>{
 		setTimeout(function(){
 			if(socket.connected){
 				var user = notConnectedUsers.getUser();
-			if(user){ 
-			users.removeUser(user.id);
-			notConnectedUsers.removeUser(user.id);
-			users.addUser(user.id, user.name, socket.id, user.gender, user.country,
-				user.age, user.unique_id, user.VERSION_NAME, user.VERSION_CODE);
-			var gender = null;
-			if(params.gender === MALE){
-				gender = 'Male';
-			}else if(params.gender === FEMALE){
-				gender = 'Female';
-			}
-			io.to(user.id).emit('onConnected', generateMessage(user.name, user.id, socket.id,
-			 `Connected ${gender} Partner`, user.gender, user.country, true,
-			  VIEW_TYPE_OTHER_MESSAGE));
-			console.log(`users added: ${users.getUser(user.id).name}`);
-			users.removeUser(socket.id);
-			users.addUser(socket.id, params.name, user.id, params.gender, params.country, 
-				params.age, params.unique_id, params.VERSION_NAME, params.VERSION_CODE);
-			if(user.gender === MALE){
-				gender = 'Male';
-			}else if(user.gender === FEMALE){
-				gender = 'Female';
-			}
-			io.to(socket.id).emit('onConnected', generateMessage(params.name, socket.id, user.id, 
-				`Connected ${gender} Partner`, params.gender, params.country, true,
-				 VIEW_TYPE_OTHER_MESSAGE));
-			console.log(`users added: ${users.getUser(socket.id).name}`);
-		}else{
-			var user = notConnectedUsers.removeUser(socket.id);
-			if(user)
-				console.log(`notConnectedUsers Removed: 
-					${notConnectedUsers.getUser(socket.id).name}`);
-			notConnectedUsers.addUser(socket.id, params.name, params.gender, params.country,
-				params.age, params.unique_id, params.VERSION_NAME, params.VERSION_CODE);
-			console.log(`notConnectedUsers added: ${notConnectedUsers.getUser(socket.id).name}, ${params.age}
-				${params.unique_id}`);
-		}
+				if(user){ 
+					if(user.unique_id === params.unique_id){
+						notConnectedUsers.removeUser(user.id);
+						notConnectedUsers.addUser(socket.id, params.name, params.gender, params.country,
+						params.age, params.unique_id, params.VERSION_NAME, params.VERSION_CODE);
+						console.log(`removed existing and added notConnectedUsers: 
+							${notConnectedUsers.getUser(socket.id).name}, ${params.age}
+							${params.unique_id}`);
+					}else{
+						users.removeUser(user.id);
+						notConnectedUsers.removeUser(user.id);
+						users.addUser(user.id, user.name, socket.id, user.gender, user.country,
+							user.age, user.unique_id, user.VERSION_NAME, user.VERSION_CODE);
+						var gender = null;
+						if(params.gender === MALE){
+							gender = 'Male';
+						}else if(params.gender === FEMALE){
+							gender = 'Female';
+						}
+						io.to(user.id).emit('onConnected', generateMessage(user.name, user.id, socket.id,
+			 				`Connected ${gender} Partner`, user.gender, user.country, true,
+			  				VIEW_TYPE_OTHER_MESSAGE));
+						console.log(`users added: ${users.getUser(user.id).name}`);
+						users.removeUser(socket.id);
+						users.addUser(socket.id, params.name, user.id, params.gender, params.country, 
+							params.age, params.unique_id, params.VERSION_NAME, params.VERSION_CODE);
+						if(user.gender === MALE){
+							gender = 'Male';
+						}else if(user.gender === FEMALE){
+							gender = 'Female';
+						}
+						io.to(socket.id).emit('onConnected', generateMessage(params.name, socket.id, user.id, 
+							`Connected ${gender} Partner`, params.gender, params.country, true,
+				 		VIEW_TYPE_OTHER_MESSAGE));
+						console.log(`users added: ${users.getUser(socket.id).name}`);
+					}
+				}else{
+					var user = notConnectedUsers.removeUser(socket.id);
+					if(user)
+						console.log(`notConnectedUsers Removed: 
+							${notConnectedUsers.getUser(socket.id).name}`);
+					notConnectedUsers.addUser(socket.id, params.name, params.gender, params.country,
+					params.age, params.unique_id, params.VERSION_NAME, params.VERSION_CODE);
+					console.log(`notConnectedUsers added: ${notConnectedUsers.getUser(socket.id).name}, ${params.age}
+						${params.unique_id}`);
+				}
 			}else{
 				console.log('User left');
 			}
